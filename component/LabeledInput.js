@@ -2,8 +2,14 @@ import { useController } from "react-hook-form";
 import { StyleSheet } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 
-export default function LabeledInput({ name, control, label, disabled }) {
-  const { field } = useController({ control, defaultValue: "", name });
+export default function LabeledInput({
+  name,
+  control,
+  label,
+  defaultValue = "",
+  ...otherProps
+}) {
+  const { field } = useController({ control, defaultValue, name });
   return (
     <>
       <Text variant="displayLarge" style={styles.textStyle}>
@@ -14,8 +20,7 @@ export default function LabeledInput({ name, control, label, disabled }) {
         value={field.value}
         onChangeText={field.onChange}
         style={styles.textInputStyle}
-        disableFullscreenUI
-        disabled={disabled}
+        {...otherProps}
       />
     </>
   );
@@ -27,6 +32,6 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     flex: 8,
-    height: 45
+    height: 45,
   },
 });
