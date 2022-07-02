@@ -1,15 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   name: null,
-  age: null
+  age: null,
 };
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
-    submitNameAndAge: (state, payload) => {
+    submitNameAndAge: (state, { payload }) => {
       state.name = payload.name;
       state.age = payload.age;
     },

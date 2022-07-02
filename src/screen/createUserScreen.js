@@ -63,7 +63,6 @@ function CreateUserScreen({ navigation }) {
 
   const _onSubmitBtnPressed = (data) => {
     const { age, name, loc } = data;
-    console.log(data);
     if (!imageUri) {
       alert("Photo is required.");
       return;
