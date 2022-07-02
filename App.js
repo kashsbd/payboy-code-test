@@ -11,7 +11,7 @@ export default function App() {
     <StoreProvider store={store}>
       <PaperProvider>
         <NavigationContainer>
-          <StatusBar style="auto" />
+          {/* <StatusBar style="auto" /> */}
           <Main />
         </NavigationContainer>
       </PaperProvider>

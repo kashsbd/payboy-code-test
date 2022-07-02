@@ -2,7 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, Image, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
@@ -11,11 +11,14 @@ import LabeledInput from "../../component/LabeledInput";
 import Row from "../../component/Row";
 import { submitNameAndAge } from "../redux/userSlice";
 
+import { percentage } from "../utils/functions";
+
+const windowHeight = Dimensions.get("window").height - 24;
+
 function CreateUserScreen({ navigation }) {
-  const [location, setLocation] = useState(null);
   const [imageUri, setImageUri] = useState(null);
 
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, setValue } = useForm();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -27,7 +30,11 @@ function CreateUserScreen({ navigation }) {
       }
 
       const location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      const locString = location
+        ? `lat:${location.coords.latitude}, lon:${location.coords.longitude}`
+        : "";
+
+      setValue("loc", locString);
     };
     requestLocationPermission();
   }, []);
@@ -43,7 +50,7 @@ function CreateUserScreen({ navigation }) {
   }, []);
 
   const _onTakePhotoBtnPressed = async () => {
-    let result = await ImagePicker.launchCameraAsync({
+    const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
@@ -54,19 +61,22 @@ function CreateUserScreen({ navigation }) {
     }
   };
 
-  const _onSubmitBtnPressed = ({ age, name, location }) => {
-    console.log(location);
+  const _onSubmitBtnPressed = (data) => {
+    const { age, name, loc } = data;
+    console.log(data);
     if (!imageUri) {
       alert("Photo is required.");
       return;
     } else if (name.length === 0) {
       alert("Name is required.");
       return;
-    } else if (age < 0) {
+    } else if (age.length === 0) {
+      alert("Age is required.");
+      return;
+    } else if (+age <= 0) {
       alert("Age can't be negative or zero.");
       return;
-    } else if (!location) {
-      console.log(location);
+    } else if (loc.length === 0) {
       alert("Location is required.");
       return;
     } else {
@@ -75,12 +85,12 @@ function CreateUserScreen({ navigation }) {
     }
   };
 
-  const locString = location
-    ? `lat:${location.coords.latitude}, lon:${location.coords.longitude}`
-    : "";
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      style={styles.container}
+      keyboardShouldPersistTaps={"always"}
+      removeClippedSubviews={false}
+    >
       <View style={styles.imageContainer}>
         {imageUri ? (
           <Image source={{ uri: imageUri }} style={styles.imageWrapper} />
@@ -107,8 +117,7 @@ function CreateUserScreen({ navigation }) {
         <Row>
           <LabeledInput
             label="Location"
-            name="location"
-            defaultValue={locString}
+            name="loc"
             control={control}
             disabled
           />
@@ -124,21 +133,21 @@ function CreateUserScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: windowHeight,
   },
   imageContainer: {
-    flex: 3.3,
     justifyContent: "center",
     alignItems: "center",
+    height: percentage(30, windowHeight),
   },
   textinputContainer: {
-    flex: 3.3,
     marginHorizontal: 12,
+    height: percentage(30, windowHeight),
   },
   buttonContainer: {
-    flex: 3.3,
     justifyContent: "space-evenly",
     alignItems: "center",
+    height: percentage(24, windowHeight),
   },
   imageWrapper: {
     borderWidth: 1,
