@@ -7,6 +7,7 @@ export default function LabeledInput({
   control,
   label,
   defaultValue = "",
+  keyboardType = "default",
   ...otherProps
 }) {
   const { field } = useController({ control, defaultValue, name });
@@ -20,6 +21,7 @@ export default function LabeledInput({
         value={field.value}
         onChangeText={field.onChange}
         style={styles.textInputStyle}
+        keyboardType={keyboardType}
         {...otherProps}
       />
     </>
